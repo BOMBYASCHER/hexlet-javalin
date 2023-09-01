@@ -14,13 +14,17 @@ public class HelloWorld {
         var app = Javalin.create(config -> {
             config.plugins.enableDevLogging();
         });
-        app.get("/", ctx -> ctx.render("index.jte"));
+        app.get("/", ctx -> ctx.render("layout/page.jte"));
         app.get("/users", ctx -> ctx.result("GET /users"));
         app.post("/users", ctx -> ctx.result("POST /users"));
 
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
             ctx.result("Hello, " + name + "!");
+        });
+
+        app.get("/my", ctx -> {
+            ctx.render("my.jte");
         });
 
         app.get("/courses", ctx -> {
