@@ -1,5 +1,17 @@
+@import org.example.hexlet.dto.users.BuildUserPage
+@param BuildUserPage page
+
 @template.layout.page(
     content = @`
+        @if(page.getErrors() != null)
+            <ul>
+                @for(var validator : page.getErrors().values())
+                    @for(var error : validator)
+                        <li>${error.getMessage()}</li>
+                    @endfor
+                @endfor
+            </ul>
+        @endif
         <main class="d-flex justify-content-center py-4 bg-body-tertiary">
             <div class="d-block bg-body-secondary p-4 py-md-5">
                 <div>
@@ -10,11 +22,11 @@
                 <div class="modal-body p-5 pt-0">
                     <form action="/users" method="post">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-3" required name="name" id="floatingInput" placeholder="name">
+                            <input type="text" class="form-control rounded-3" value="${page.getName()}" required name="name" id="floatingInput" placeholder="name">
                             <label for="floatingInput">Name</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control rounded-3" required name="email" id="floatingInput" placeholder="name@example.com">
+                            <input type="email" class="form-control rounded-3" value="${page.getEmail()}" required name="email" id="floatingInput" placeholder="name@example.com">
                             <label for="floatingInput">Email address</label>
                         </div>
                         <div class="form-floating mb-3">

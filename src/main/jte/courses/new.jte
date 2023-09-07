@@ -1,15 +1,27 @@
+@import org.example.hexlet.dto.courses.BuildCoursePage
+@param BuildCoursePage page
+
 @template.layout.page(
     content = @`
+        @if(page.getErrors() != null)
+            <ul>
+                @for(var validator : page.getErrors().values())
+                    @for(var error : validator)
+                        <li>${error.getMessage()}</li>
+                    @endfor
+                @endfor
+            </ul>
+        @endif
         <main class="d-flex align-items-center py-4 bg-body-tertiary">
             <div class="form-signin m-auto">
                 <form action="/courses" method="post">
                     <h1 class="h3 mb-3 fw-normal">Add new course</h1>
                     <div class="form-floating">
-                        <input type="text" class="form-control" required name="name" id="floatingInput" placeholder="name">
+                        <input type="text" class="form-control" value="${page.getName()}" required name="name" id="floatingInput" placeholder="name">
                         <label for="floatingInput">Name</label>
                     </div>
                     <div class="form-floating">
-                        <input type="text" class="form-control" required name="description" id="floatingInput" placeholder="description">
+                        <input type="text" class="form-control" value="${page.getDescription()}" required name="description" id="floatingInput" placeholder="description">
                         <label for="floatingInput">Description</label>
                     </div>
                     <button class="btn btn-primary mt-4 w-100 py-2" type="submit">Create</button>

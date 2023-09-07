@@ -5,7 +5,10 @@ import io.javalin.Javalin;
 import java.util.Collections;
 import java.util.List;
 
+import io.javalin.validation.ValidationException;
 import org.apache.commons.text.StringEscapeUtils;
+import org.example.hexlet.dto.courses.BuildCoursePage;
+import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.dto.users.UsersPage;
 import org.example.hexlet.model.Course;
 import org.example.hexlet.dto.courses.CoursePage;
@@ -59,16 +62,27 @@ public class HelloWorld {
         });
 
         app.get("/courses/new", ctx -> {
-            ctx.render("courses/new.jte");
+            var page = new BuildCoursePage();
+            ctx.render("courses/new.jte", Collections.singletonMap("page", page));
         });
 
         app.post("/courses", ctx -> {
             var name = ctx.formParam("name");
             var description = ctx.formParam("description");
-
-            var course = new Course(name, description);
-            courseRepository.save(course);
-            ctx.redirect("courses");
+            try {
+                ctx.formParamAsClass("name", String.class)
+                        .check(value -> value.length() >= 2, "Name of course short than 2 characters")
+                        .get();
+                ctx.formParamAsClass("description", String.class)
+                        .check(value -> value.length() > 10, "Description short than 10 characters")
+                        .get();
+                var course = new Course(name, description);
+                courseRepository.save(course);
+                ctx.redirect("/courses");
+            } catch (ValidationException e) {
+                var page = new BuildCoursePage(name, description, e.getErrors());
+                ctx.render("courses/new.jte", Collections.singletonMap("page", page));
+            }
         });
 
         app.get("/courses/{id}", ctx -> {
@@ -80,18 +94,26 @@ public class HelloWorld {
         });
 
         app.get("/users/new", ctx -> {
-            ctx.render("users/new.jte");
+            var page = new BuildUserPage();
+            ctx.render("users/new.jte", Collections.singletonMap("page", page));
         });
 
         app.post("/users", ctx -> {
             var name = ctx.formParam("name").trim();
             var email = ctx.formParam("email").trim().toLowerCase();
-            var password = ctx.formParam("password");
-            var passwordConfirmation = ctx.formParam("passwordConfirmation");
-
-            var user = new User(name, email, password);
-            userRepository.save(user);
-            ctx.redirect("/users");
+            try {
+                var passwordConfirmation = ctx.formParam("passwordConfirmation");
+                var password = ctx.formParamAsClass("password", String.class)
+                        .check(value -> value.equals(passwordConfirmation), "Password mismatch")
+                        .check(value -> value.length() > 6, "Password short than 6 characters")
+                        .get();
+                var user = new User(name, email, password);
+                userRepository.save(user);
+                ctx.redirect("/users");
+            } catch (ValidationException e) {
+                var page = new BuildUserPage(name, email, e.getErrors());
+                ctx.render("users/new.jte", Collections.singletonMap("page", page));
+            }
         });
 
         app.get("/users/{id}", ctx -> {
