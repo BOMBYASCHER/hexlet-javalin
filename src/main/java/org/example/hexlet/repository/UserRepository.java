@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.example.hexlet.model.User;
 
 public class UserRepository {
-    private static List<User> entities = new ArrayList<User>();
+    private static List<User> entities = new ArrayList<>();
 
     public static void save(User user) {
         user.setId((long) entities.size() + 1);

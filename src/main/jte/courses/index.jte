@@ -1,19 +1,22 @@
 @import org.example.hexlet.dto.courses.CoursesPage
+@import org.example.hexlet.util.NamedRoutes
+
 @param CoursesPage page
+@param NamedRoutes path
 
 @template.layout.page(
     content = @`
         <main class="mx-4">
             <h1>${page.getHeader()}</h1>
             <div class="my-5">
-                <form action="/courses/new" method="get">
+                <form action="${path.newCoursePath()}" method="get">
                     <button class="btn btn-primary">Add new course</button>
                 </form>
             </div>
             <div>
                 <h3>Search courses</h3>
                 <div class="navbar input-group md-3">
-                    <form action="/courses" method="get" class="d-flex" >
+                    <form action="${path.coursesPath()}" method="get" class="d-flex" >
                         <input class="form-control" name="term" type="search" value="${page.getTerm()}">
                         <button class="mx-2 btn btn-primary" type="submit">Search</button>
                     </form>
@@ -29,7 +32,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${course.getName()}</h5>
                                 <p class="card-text">${course.getDescription()}</p>
-                                <a href="/courses/${course.getName()}" class="btn btn-primary">Go to course</a>
+                                <a href="${path.coursePath(course.getName())}" class="btn btn-primary">Go to course</a>
                             </div>
                         </div>
                     </div>

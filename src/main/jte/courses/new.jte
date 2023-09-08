@@ -1,5 +1,8 @@
 @import org.example.hexlet.dto.courses.BuildCoursePage
+@import org.example.hexlet.util.NamedRoutes
+
 @param BuildCoursePage page
+@param NamedRoutes path
 
 @template.layout.page(
     content = @`
@@ -14,7 +17,7 @@
         @endif
         <main class="d-flex align-items-center py-4 bg-body-tertiary">
             <div class="form-signin m-auto">
-                <form action="/courses" method="post">
+                <form action="${path.coursesPath()}" method="post">
                     <h1 class="h3 mb-3 fw-normal">Add new course</h1>
                     <div class="form-floating">
                         <input type="text" class="form-control" value="${page.getName()}" required name="name" id="floatingInput" placeholder="name">

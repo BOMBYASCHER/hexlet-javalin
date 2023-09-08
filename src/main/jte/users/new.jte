@@ -1,5 +1,8 @@
 @import org.example.hexlet.dto.users.BuildUserPage
+@import org.example.hexlet.util.NamedRoutes
+
 @param BuildUserPage page
+@param NamedRoutes path
 
 @template.layout.page(
     content = @`
@@ -20,7 +23,7 @@
                     </div>
                 </div>
                 <div class="modal-body p-5 pt-0">
-                    <form action="/users" method="post">
+                    <form action="${path.usersPath()}" method="post">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control rounded-3" value="${page.getName()}" required name="name" id="floatingInput" placeholder="name">
                             <label for="floatingInput">Name</label>

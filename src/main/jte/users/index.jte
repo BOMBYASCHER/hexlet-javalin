@@ -1,14 +1,16 @@
 @import org.example.hexlet.dto.users.UsersPage
 @import org.example.hexlet.model.User
+@import org.example.hexlet.util.NamedRoutes
 
 @param UsersPage page
+@param NamedRoutes path
 
 @template.layout.page(
     content = @`
         <main class="mx-4">
             <h1>Users</h1>
             <div class="my-5">
-                <form action="/users/new" method="get">
+                <form action="${path.newUserPath()}" method="get">
                     <button class="btn btn-primary">Registration</button>
                 </form>
             </div>

@@ -1,4 +1,5 @@
 @import gg.jte.Content
+@import org.example.hexlet.util.NamedRoutes
 
 @param Content content
 @param Content footer = null
@@ -14,9 +15,9 @@
     <body>
         <header class="d-flex justify-content-center py-3 mb-auto">
             <ul class="nav nav-pills">
-                <li class="nav-item"><a href="/users" class="nav-link">Users</a></li>
-                <li class="nav-item"><a href="/courses" class="nav-link">Courses</a></li>
-                <li class="nav-item"><a href="/my" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="${NamedRoutes.usersPath()}" class="nav-link">Users</a></li>
+                <li class="nav-item"><a href="${NamedRoutes.coursesPath()}" class="nav-link">Courses</a></li>
+                <li class="nav-item"><a href="${NamedRoutes.myPath()}" class="nav-link">About</a></li>
             </ul>
         </header>
         <div class="content mx-4">

@@ -16,38 +16,36 @@ import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.model.User;
 import org.example.hexlet.repository.CourseRepository;
 import org.example.hexlet.repository.UserRepository;
+import org.example.hexlet.util.NamedRoutes;
 
 public class HelloWorld {
-    private static UserRepository userRepository = new UserRepository();
-    private static CourseRepository courseRepository = new CourseRepository();
-
     public static void main(String[] args) {
         var app = Javalin.create(config -> {
             config.plugins.enableDevLogging();
         });
-        courseRepository.save(new Course("Java-web", "Web technologies"));
-        courseRepository.save(new Course("Java-oop", "Strong programming"));
-        courseRepository.save(new Course("Java-core", "Basic skills"));
-        courseRepository.save(new Course("Java-advance", "Advanced programming skills"));
+        CourseRepository.save(new Course("Java-web", "Web technologies"));
+        CourseRepository.save(new Course("Java-oop", "Strong programming"));
+        CourseRepository.save(new Course("Java-core", "Basic skills"));
+        CourseRepository.save(new Course("Java-advance", "Advanced programming skills"));
         app.get("/", ctx -> ctx.render("layout/page.jte"));
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
             ctx.result("Hello, " + name + "!");
         });
 
-        app.get("/my", ctx -> {
+        app.get(NamedRoutes.myPath(), ctx -> {
             ctx.render("my.jte");
         });
 
-        app.get("/users", ctx -> {
-            var page = new UsersPage(userRepository.getEntities());
+        app.get(NamedRoutes.usersPath(),ctx -> {
+            var page = new UsersPage(UserRepository.getEntities());
             ctx.render("users/index.jte", Collections.singletonMap("page", page));
         });
 
-        app.get("/courses", ctx -> {
+        app.get(NamedRoutes.coursesPath(), ctx -> {
             var term = ctx.queryParam("term");
             List<Course> courses;
-            var entities = courseRepository.getEntities();
+            var entities = CourseRepository.getEntities();
             if (term != null) {
                 courses = entities.stream()
                         .filter(course -> course.getName().equalsIgnoreCase(term) ||
@@ -61,12 +59,12 @@ public class HelloWorld {
             ctx.render("courses/index.jte", Collections.singletonMap("page", page));
         });
 
-        app.get("/courses/new", ctx -> {
+        app.get(NamedRoutes.newCoursePath(), ctx -> {
             var page = new BuildCoursePage();
             ctx.render("courses/new.jte", Collections.singletonMap("page", page));
         });
 
-        app.post("/courses", ctx -> {
+        app.post(NamedRoutes.coursesPath(), ctx -> {
             var name = ctx.formParam("name");
             var description = ctx.formParam("description");
             try {
@@ -77,15 +75,15 @@ public class HelloWorld {
                         .check(value -> value.length() > 10, "Description short than 10 characters")
                         .get();
                 var course = new Course(name, description);
-                courseRepository.save(course);
-                ctx.redirect("/courses");
+                CourseRepository.save(course);
+                ctx.redirect(NamedRoutes.coursesPath());
             } catch (ValidationException e) {
                 var page = new BuildCoursePage(name, description, e.getErrors());
                 ctx.render("courses/new.jte", Collections.singletonMap("page", page));
             }
         });
 
-        app.get("/courses/{id}", ctx -> {
+        app.get(NamedRoutes.coursePath("{id}"), ctx -> {
             var id = ctx.pathParam("id");
             var escapedId = StringEscapeUtils.escapeHtml4(id);
             var course = new Course("Name: " + escapedId, "Course with id: " + escapedId);
@@ -93,12 +91,12 @@ public class HelloWorld {
             ctx.render("courses/show.jte", Collections.singletonMap("page", page));
         });
 
-        app.get("/users/new", ctx -> {
+        app.get(NamedRoutes.newUserPath(), ctx -> {
             var page = new BuildUserPage();
             ctx.render("users/new.jte", Collections.singletonMap("page", page));
         });
 
-        app.post("/users", ctx -> {
+        app.post(NamedRoutes.usersPath(), ctx -> {
             var name = ctx.formParam("name").trim();
             var email = ctx.formParam("email").trim().toLowerCase();
             try {
@@ -108,15 +106,15 @@ public class HelloWorld {
                         .check(value -> value.length() > 6, "Password short than 6 characters")
                         .get();
                 var user = new User(name, email, password);
-                userRepository.save(user);
-                ctx.redirect("/users");
+                UserRepository.save(user);
+                ctx.redirect(NamedRoutes.usersPath());
             } catch (ValidationException e) {
                 var page = new BuildUserPage(name, email, e.getErrors());
                 ctx.render("users/new.jte", Collections.singletonMap("page", page));
             }
         });
 
-        app.get("/users/{id}", ctx -> {
+        app.get(NamedRoutes.userPath("{id}"), ctx -> {
             var id = ctx.pathParam("id");
             var escapedId = StringEscapeUtils.escapeHtml4(id);
             ctx.contentType("text/html");

@@ -1,3 +1,7 @@
+@import org.example.hexlet.util.NamedRoutes
+
+@param NamedRoutes path
+
 @template.layout.page(
     content = @`
         <main class="px-3">
@@ -11,12 +15,11 @@
     footer = @`
         <footer class="mt-auto py-3 my-4">
             <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-                <li class="nav-item"><a href="/users" class="nav-link px-2 text-muted">Users</a></li>
-                <li class="nav-item"><a href="/courses" class="nav-link px-2 text-muted">Courses</a></li>
-                <li class="nav-item"><a href="/my" class="nav-link px-2 text-muted">About</a></li>
+                <li class="nav-item"><a href="${path.usersPath()}" class="nav-link px-2 text-muted">Users</a></li>
+                <li class="nav-item"><a href="${path.coursesPath()}" class="nav-link px-2 text-muted">Courses</a></li>
+                <li class="nav-item"><a href="${path.myPath()}" class="nav-link px-2 text-muted">About</a></li>
             </ul>
             <p class="text-center text-muted">© 2023 Company, Inc</p>
         </footer>
-
     `
 )
