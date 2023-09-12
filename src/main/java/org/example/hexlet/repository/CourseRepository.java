@@ -29,6 +29,10 @@ public class CourseRepository {
         return Optional.of(course);
     }
 
+    public static void delete(Long id) {
+
+    }
+
     public static List<Course> getEntities() {
         return entities;
     }

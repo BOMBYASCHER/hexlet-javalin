@@ -32,7 +32,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${course.getName()}</h5>
                                 <p class="card-text">${course.getDescription()}</p>
-                                <a href="${path.coursePath(course.getName())}" class="btn btn-primary">Go to course</a>
+                                <a href="${path.coursePath(course.getId())}" class="btn btn-primary">Go to course</a>
                             </div>
                         </div>
                     </div>

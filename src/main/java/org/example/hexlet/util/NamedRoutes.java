@@ -21,7 +21,7 @@ public class NamedRoutes {
     }
 
     public static String userPath(Long id) {
-        return coursePath(String.valueOf(id));
+        return userPath(String.valueOf(id));
     }
 
     public static String userPath(String id) {
@@ -34,5 +34,21 @@ public class NamedRoutes {
 
     public static String coursePath(String id) {
         return "/courses/" + id;
+    }
+
+    public static String editUserPath(Long id) {
+        return userPath(id) + "/edit";
+    }
+
+    public static String editUserPath(String id) {
+        return userPath(id) + "/edit";
+    }
+
+    public static String editCoursePath(Long id) {
+        return coursePath(id) + "/edit";
+    }
+
+    public static String editCoursePath(String id) {
+        return coursePath(id) + "/edit";
     }
 }

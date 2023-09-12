@@ -7,6 +7,8 @@ import java.util.List;
 
 import io.javalin.validation.ValidationException;
 import org.apache.commons.text.StringEscapeUtils;
+import org.example.hexlet.controller.CoursesController;
+import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.courses.BuildCoursePage;
 import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.dto.users.UsersPage;
@@ -23,10 +25,12 @@ public class HelloWorld {
         var app = Javalin.create(config -> {
             config.plugins.enableDevLogging();
         });
+
         CourseRepository.save(new Course("Java-web", "Web technologies"));
         CourseRepository.save(new Course("Java-oop", "Strong programming"));
         CourseRepository.save(new Course("Java-core", "Basic skills"));
         CourseRepository.save(new Course("Java-advance", "Advanced programming skills"));
+
         app.get("/", ctx -> ctx.render("layout/page.jte"));
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
@@ -37,89 +41,21 @@ public class HelloWorld {
             ctx.render("my.jte");
         });
 
-        app.get(NamedRoutes.usersPath(),ctx -> {
-            var page = new UsersPage(UserRepository.getEntities());
-            ctx.render("users/index.jte", Collections.singletonMap("page", page));
-        });
+        app.get(NamedRoutes.usersPath(), UsersController::index);
+        app.get(NamedRoutes.newUserPath(), UsersController::build);
+        app.post(NamedRoutes.usersPath(), UsersController::create);
+        app.get(NamedRoutes.userPath("{id}"), UsersController::show);
+        app.get(NamedRoutes.editUserPath("{id}"), UsersController::edit);
+        app.patch(NamedRoutes.userPath("{id}"), UsersController::update);
+        app.delete(NamedRoutes.usersPath(), UsersController::destroy);
 
-        app.get(NamedRoutes.coursesPath(), ctx -> {
-            var term = ctx.queryParam("term");
-            List<Course> courses;
-            var entities = CourseRepository.getEntities();
-            if (term != null) {
-                courses = entities.stream()
-                        .filter(course -> course.getName().equalsIgnoreCase(term) ||
-                                course.getDescription().toLowerCase().contains(term.toLowerCase()))
-                        .toList();
-            } else {
-                courses = entities;
-            }
-            var header = "Programming courses";
-            var page = new CoursesPage(courses, header, term);
-            ctx.render("courses/index.jte", Collections.singletonMap("page", page));
-        });
-
-        app.get(NamedRoutes.newCoursePath(), ctx -> {
-            var page = new BuildCoursePage();
-            ctx.render("courses/new.jte", Collections.singletonMap("page", page));
-        });
-
-        app.post(NamedRoutes.coursesPath(), ctx -> {
-            var name = ctx.formParam("name");
-            var description = ctx.formParam("description");
-            try {
-                ctx.formParamAsClass("name", String.class)
-                        .check(value -> value.length() >= 2, "Name of course short than 2 characters")
-                        .get();
-                ctx.formParamAsClass("description", String.class)
-                        .check(value -> value.length() > 10, "Description short than 10 characters")
-                        .get();
-                var course = new Course(name, description);
-                CourseRepository.save(course);
-                ctx.redirect(NamedRoutes.coursesPath());
-            } catch (ValidationException e) {
-                var page = new BuildCoursePage(name, description, e.getErrors());
-                ctx.render("courses/new.jte", Collections.singletonMap("page", page));
-            }
-        });
-
-        app.get(NamedRoutes.coursePath("{id}"), ctx -> {
-            var id = ctx.pathParam("id");
-            var escapedId = StringEscapeUtils.escapeHtml4(id);
-            var course = new Course("Name: " + escapedId, "Course with id: " + escapedId);
-            var page = new CoursePage(course);
-            ctx.render("courses/show.jte", Collections.singletonMap("page", page));
-        });
-
-        app.get(NamedRoutes.newUserPath(), ctx -> {
-            var page = new BuildUserPage();
-            ctx.render("users/new.jte", Collections.singletonMap("page", page));
-        });
-
-        app.post(NamedRoutes.usersPath(), ctx -> {
-            var name = ctx.formParam("name").trim();
-            var email = ctx.formParam("email").trim().toLowerCase();
-            try {
-                var passwordConfirmation = ctx.formParam("passwordConfirmation");
-                var password = ctx.formParamAsClass("password", String.class)
-                        .check(value -> value.equals(passwordConfirmation), "Password mismatch")
-                        .check(value -> value.length() > 6, "Password short than 6 characters")
-                        .get();
-                var user = new User(name, email, password);
-                UserRepository.save(user);
-                ctx.redirect(NamedRoutes.usersPath());
-            } catch (ValidationException e) {
-                var page = new BuildUserPage(name, email, e.getErrors());
-                ctx.render("users/new.jte", Collections.singletonMap("page", page));
-            }
-        });
-
-        app.get(NamedRoutes.userPath("{id}"), ctx -> {
-            var id = ctx.pathParam("id");
-            var escapedId = StringEscapeUtils.escapeHtml4(id);
-            ctx.contentType("text/html");
-            ctx.result("User ID: " + escapedId);
-        });
+        app.get(NamedRoutes.coursesPath(), CoursesController::index);
+        app.get(NamedRoutes.newCoursePath(), CoursesController::build);
+        app.post(NamedRoutes.coursesPath(), CoursesController::create);
+        app.get(NamedRoutes.coursePath("{id}"), CoursesController::show);
+        app.get(NamedRoutes.editCoursePath("{id}"), CoursesController::edit);
+        app.patch(NamedRoutes.coursePath("{id}"), CoursesController::update);
+        app.delete(NamedRoutes.coursesPath(), CoursesController::destroy);
 
         app.get("/courses/{courseId}/lessons/{id}", ctx -> {
             var output = "Course ID: " +
