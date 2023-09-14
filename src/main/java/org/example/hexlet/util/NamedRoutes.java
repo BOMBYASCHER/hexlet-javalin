@@ -54,4 +54,12 @@ public class NamedRoutes {
     public static String editCoursePath(String id) {
         return coursePath(id) + "/edit";
     }
+
+    public static String sessionsPath() {
+        return "/sessions";
+    }
+
+    public static String buildSessionPath() {
+        return sessionsPath() + "/build";
+    }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import io.javalin.validation.ValidationException;
 import org.apache.commons.text.StringEscapeUtils;
 import org.example.hexlet.controller.CoursesController;
+import org.example.hexlet.controller.SessionsController;
 import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.MainPage;
 import org.example.hexlet.dto.courses.BuildCoursePage;
@@ -34,7 +35,7 @@ public class HelloWorld {
 
         app.get(NamedRoutes.rootPath(), ctx -> {
             var visited = Boolean.valueOf(ctx.cookie("visited"));
-            var page = new MainPage(visited);
+            var page = new MainPage(visited, ctx.sessionAttribute("currentUser"));
             ctx.render("index.jte", Collections.singletonMap("page", page));
             ctx.cookie("visited", String.valueOf(true));
         });
@@ -47,6 +48,10 @@ public class HelloWorld {
         app.get(NamedRoutes.myPath(), ctx -> {
             ctx.render("my.jte");
         });
+
+        app.get(NamedRoutes.buildSessionPath(), SessionsController::build);
+        app.post(NamedRoutes.sessionsPath(), SessionsController::create);
+        app.delete(NamedRoutes.sessionsPath(), SessionsController::destroy);
 
         app.get(NamedRoutes.usersPath(), UsersController::index);
         app.get(NamedRoutes.newUserPath(), UsersController::build);
