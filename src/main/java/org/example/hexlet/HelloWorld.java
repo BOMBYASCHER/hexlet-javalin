@@ -9,6 +9,7 @@ import io.javalin.validation.ValidationException;
 import org.apache.commons.text.StringEscapeUtils;
 import org.example.hexlet.controller.CoursesController;
 import org.example.hexlet.controller.UsersController;
+import org.example.hexlet.dto.MainPage;
 import org.example.hexlet.dto.courses.BuildCoursePage;
 import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.dto.users.UsersPage;
@@ -31,7 +32,13 @@ public class HelloWorld {
         CourseRepository.save(new Course("Java-core", "Basic skills"));
         CourseRepository.save(new Course("Java-advance", "Advanced programming skills"));
 
-        app.get("/", ctx -> ctx.render("layout/page.jte"));
+        app.get(NamedRoutes.rootPath(), ctx -> {
+            var visited = Boolean.valueOf(ctx.cookie("visited"));
+            var page = new MainPage(visited);
+            ctx.render("index.jte", Collections.singletonMap("page", page));
+            ctx.cookie("visited", String.valueOf(true));
+        });
+
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
             ctx.result("Hello, " + name + "!");
