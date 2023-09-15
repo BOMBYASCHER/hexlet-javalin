@@ -1,8 +1,10 @@
 @import gg.jte.Content
 @import org.example.hexlet.util.NamedRoutes
+@import org.example.hexlet.dto.BasePage
 
 @param Content content
 @param Content footer = null
+@param BasePage page = null
 
 <!doctype html>
 <html lang="en">
@@ -20,6 +22,11 @@
                 <li class="nav-item"><a href="${NamedRoutes.myPath()}" class="nav-link">About</a></li>
             </ul>
         </header>
+        @if(page != null && page.getFlash() != null)
+            <div class="alert alert-success mx-4" role="alert">
+                ${page.getFlash()}
+            </div>
+        @endif
         <div class="content mx-4">
             ${content}
         </div>

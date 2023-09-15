@@ -5,6 +5,7 @@
 @param NamedRoutes path
 
 @template.layout.page(
+    page = page,
     content = @`
         <main class="mx-4">
             <h1>${page.getHeader()}</h1>

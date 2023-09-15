@@ -2,19 +2,16 @@ package org.example.hexlet.dto.courses;
 
 import java.util.List;
 
+import org.example.hexlet.dto.BasePage;
 import org.example.hexlet.model.Course;
 
 import lombok.Getter;
+import lombok.AllArgsConstructor;
 
 @Getter
-public class CoursesPage {
+@AllArgsConstructor
+public class CoursesPage extends BasePage {
     private List<Course> courses;
     private String header;
     private String term;
-
-    public CoursesPage(List<Course> courses, String header, String term) {
-        this.courses = courses;
-        this.header = header;
-        this.term = term;
-    }
 }

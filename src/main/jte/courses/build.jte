@@ -7,13 +7,13 @@
 @template.layout.page(
     content = @`
         @if(page.getErrors() != null)
-            <ul>
-                @for(var validator : page.getErrors().values())
-                    @for(var error : validator)
-                        <li>${error.getMessage()}</li>
-                    @endfor
+            @for(var validator : page.getErrors().values())
+                @for(var error : validator)
+                    <div class="alert alert-danger" role="alert">
+                        ${error.getMessage()}
+                    </div>
                 @endfor
-            </ul>
+            @endfor
         @endif
         <main class="d-flex align-items-center py-4 bg-body-tertiary">
             <div class="form-signin m-auto">

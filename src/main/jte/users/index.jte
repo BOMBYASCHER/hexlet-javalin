@@ -6,6 +6,7 @@
 @param NamedRoutes path
 
 @template.layout.page(
+    page = page,
     content = @`
         <main class="mx-4">
             <h1>Users</h1>
