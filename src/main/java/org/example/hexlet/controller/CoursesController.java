@@ -1,5 +1,6 @@
 package org.example.hexlet.controller;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
 public class CoursesController {
-    public static void index(Context ctx) {
+    public static void index(Context ctx) throws SQLException {
         var term = ctx.queryParam("term");
         List<Course> courses;
         var entities = CourseRepository.getEntities();
@@ -33,7 +34,7 @@ public class CoursesController {
         ctx.render("courses/index.jte", Collections.singletonMap("page", page));
     }
 
-    public static void show(Context ctx) {
+    public static void show(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var course = CourseRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -46,11 +47,11 @@ public class CoursesController {
         ctx.render("courses/build.jte", Collections.singletonMap("page", page));
     }
 
-    public static void create(Context ctx) {
+    public static void create(Context ctx) throws SQLException {
 //        var nameValidation = ctx.formParamAsClass("name", String.class)
-//                .check(value -> value.length() >= 2, "Name of course short than 2 characters");
+//                .check(value -> value.length() >= 2, "Name of course shorter than 2 characters");
 //        var descriptionValidation = ctx.formParamAsClass("description", String.class)
-//                .check(value -> value.length() > 10, "Description short than 10 characters");
+//                .check(value -> value.length() > 10, "Description shorter than 10 characters");
 //        var errors = JavalinValidation.collectErrors(nameValidation, descriptionValidation);
 //        var name = nameValidation.get();
 //        var description = descriptionValidation.get();
@@ -83,7 +84,7 @@ public class CoursesController {
         }
     }
 
-    public static void edit(Context ctx) {
+    public static void edit(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var user = CourseRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -91,7 +92,7 @@ public class CoursesController {
         ctx.render("courses/edit.jte", Collections.singletonMap("page", page));
     }
 
-    public static void update(Context ctx) {
+    public static void update(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var name = ctx.formParam("name");
         var description = ctx.formParam("description");

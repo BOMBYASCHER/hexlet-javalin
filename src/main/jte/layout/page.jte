@@ -19,6 +19,7 @@
             <ul class="nav nav-pills">
                 <li class="nav-item"><a href="${NamedRoutes.usersPath()}" class="nav-link">Users</a></li>
                 <li class="nav-item"><a href="${NamedRoutes.coursesPath()}" class="nav-link">Courses</a></li>
+                <li class="nav-item"><a href="${NamedRoutes.carsPath()}" class="nav-link">Cars</a></li>
                 <li class="nav-item"><a href="${NamedRoutes.myPath()}" class="nav-link">About</a></li>
             </ul>
         </header>

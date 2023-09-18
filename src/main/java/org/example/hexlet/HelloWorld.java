@@ -1,29 +1,49 @@
 package org.example.hexlet;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.Collections;
-import java.util.List;
+import java.util.stream.Collectors;
 
-import io.javalin.validation.ValidationException;
-import org.apache.commons.text.StringEscapeUtils;
+import org.example.hexlet.controller.CarController;
 import org.example.hexlet.controller.CoursesController;
 import org.example.hexlet.controller.SessionsController;
 import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.MainPage;
-import org.example.hexlet.dto.courses.BuildCoursePage;
-import org.example.hexlet.dto.users.BuildUserPage;
-import org.example.hexlet.dto.users.UsersPage;
 import org.example.hexlet.model.Course;
-import org.example.hexlet.dto.courses.CoursePage;
-import org.example.hexlet.dto.courses.CoursesPage;
-import org.example.hexlet.model.User;
+import org.example.hexlet.repository.BaseRepository;
 import org.example.hexlet.repository.CourseRepository;
-import org.example.hexlet.repository.UserRepository;
 import org.example.hexlet.util.NamedRoutes;
 
 public class HelloWorld {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SQLException {
+        Javalin app = getApp();
+        app.start(7070);
+    }
+
+    public static Javalin getApp() throws IOException, SQLException {
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:hexlet_project;DB_CLOSE_DELAY=-1;");
+
+        var dataSource = new HikariDataSource(hikariConfig);
+
+        var url = HelloWorld.class.getClassLoader().getResource("schema.sql");
+        var file = new File(url.getFile());
+        var sql = Files.lines(file.toPath())
+                .collect(Collectors.joining("\n"));
+
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
+        BaseRepository.dataSource = dataSource;
+
         var app = Javalin.create(config -> {
             config.plugins.enableDevLogging();
         });
@@ -69,6 +89,11 @@ public class HelloWorld {
         app.patch(NamedRoutes.coursePath("{id}"), CoursesController::update);
         app.delete(NamedRoutes.coursesPath(), CoursesController::destroy);
 
+        app.get(NamedRoutes.carsPath(), CarController::index);
+        app.get(NamedRoutes.newCarPath(), CarController::build);
+        app.post(NamedRoutes.carsPath(), CarController::create);
+        app.get(NamedRoutes.carPath("{id}"), CarController::show);
+
         app.get("/courses/{courseId}/lessons/{id}", ctx -> {
             var output = "Course ID: " +
                     ctx.pathParam("courseId") +
@@ -78,6 +103,6 @@ public class HelloWorld {
             ctx.result(output);
         });
 
-        app.start(7070);
+        return app;
     }
 }

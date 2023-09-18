@@ -1,9 +1,9 @@
 package org.example.hexlet.controller;
 
+import java.sql.SQLException;
 import java.util.Collections;
 
 import io.javalin.validation.ValidationException;
-import org.apache.commons.text.StringEscapeUtils;
 import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.util.NamedRoutes;
 import org.example.hexlet.dto.users.UserPage;
@@ -15,14 +15,14 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
 public class UsersController {
-    public static void index(Context ctx) {
+    public static void index(Context ctx) throws SQLException {
         var users = UserRepository.getEntities();
         var page = new UsersPage(users);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         ctx.render("users/index.jte", Collections.singletonMap("page", page));
     }
 
-    public static void show(Context ctx) {
+    public static void show(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var user = UserRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -35,7 +35,7 @@ public class UsersController {
         ctx.render("users/build.jte", Collections.singletonMap("page", page));
     }
 
-    public static void create(Context ctx) {
+    public static void create(Context ctx) throws SQLException {
         var name = ctx.formParam("name").trim();
         var email = ctx.formParam("email").trim().toLowerCase();
         try {
@@ -54,7 +54,7 @@ public class UsersController {
         }
     }
 
-    public static void edit(Context ctx) {
+    public static void edit(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var user = UserRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -63,7 +63,7 @@ public class UsersController {
     }
 
 
-    public static void update(Context ctx) {
+    public static void update(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
 
         var name = ctx.formParam("name");
