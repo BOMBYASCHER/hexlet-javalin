@@ -4,6 +4,6 @@ WORKDIR . /app
 
 COPY . /app
 
-RUN gradle installDist
+RUN ./gradle installDist
 
 CMD . /build/install/HexletJavalin/bin/HexletJavalin
