@@ -1,8 +1,8 @@
 FROM gradle:7.4.0-jdk17
 
-WORKDIR /org.example.hexlet
+WORKDIR /src/main/java/org.example.hexlet
 
-COPY /org.example.hexlet .
+COPY /src/main/java/org.example.hexlet .
 
 RUN gradle installDist
 
