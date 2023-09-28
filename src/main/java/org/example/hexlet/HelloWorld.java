@@ -35,6 +35,7 @@ public class HelloWorld {
 
         var url = HelloWorld.class.getClassLoader().getResource("schema.sql");
         var file = new File(url.getFile());
+        System.out.println(file.toPath());
         var sql = Files.lines(file.toPath())
                 .collect(Collectors.joining("\n"));
 
