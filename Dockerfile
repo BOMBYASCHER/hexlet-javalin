@@ -2,7 +2,7 @@ FROM eclipse-temurin:20-jdk
 
 WORKDIR /app
 
-COPY gradle gradle
+COPY gradle ./gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY gradlew .
