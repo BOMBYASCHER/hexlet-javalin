@@ -1,9 +1,9 @@
-FROM eclipse-temurin:20-jdk
-
-ARG GRADLE_VERSION=8.3
+FROM gradle:8.3.0-jdk20
 
 WORKDIR /app
 
 COPY . /app
 
-RUN gradle run
+RUN gradle installDist
+
+CMD ./build/install/app/bin/app

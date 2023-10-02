@@ -1,10 +1,10 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
     id 'application'
 }
 
 application {
-    mainClassName = "org.example.hexlet.HelloWorld"
     mainClass.set("org.example.hexlet.HelloWorld")
 }
 
@@ -28,16 +28,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.0")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")
-}
-
-jar {
-    manifest {
-        attributes "Main-Class": "org.example.hexlet.HelloWorld"
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }
 
 test {

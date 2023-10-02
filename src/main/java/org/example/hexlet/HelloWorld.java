@@ -4,12 +4,11 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import org.example.hexlet.controller.CarController;
 import org.example.hexlet.controller.CoursesController;
@@ -32,14 +31,10 @@ public class HelloWorld {
         hikariConfig.setJdbcUrl("jdbc:h2:mem:hexlet_project;DB_CLOSE_DELAY=-1;");
 
         var dataSource = new HikariDataSource(hikariConfig);
-
-        var url = HelloWorld.class.getClassLoader().getResource("schema.sql");
-        var file = new File(url.getFile());
-        System.out.println("||||||||||||||||||||||||||||||");
-        System.out.println(file.toPath());
-        System.out.println("||||||||||||||||||||||||||||||");
-        var sql = Files.lines(file.toPath())
-                .collect(Collectors.joining("\n"));
+        String sql;
+        try (InputStream is = HelloWorld.class.getResourceAsStream("/schema.sql")) {
+            sql = new String(is != null ? is.readAllBytes() : new byte[0], StandardCharsets.UTF_8);
+        }
 
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
@@ -47,9 +42,7 @@ public class HelloWorld {
         }
         BaseRepository.dataSource = dataSource;
 
-        var app = Javalin.create(config -> {
-            config.plugins.enableDevLogging();
-        });
+        var app = Javalin.create(config -> config.plugins.enableDevLogging());
 
         CourseRepository.save(new Course("Java-web", "Web technologies"));
         CourseRepository.save(new Course("Java-oop", "Strong programming"));
@@ -68,9 +61,7 @@ public class HelloWorld {
             ctx.result("Hello, " + name + "!");
         });
 
-        app.get(NamedRoutes.myPath(), ctx -> {
-            ctx.render("my.jte");
-        });
+        app.get(NamedRoutes.myPath(), ctx -> ctx.render("my.jte"));
 
         app.get(NamedRoutes.buildSessionPath(), SessionsController::build);
         app.post(NamedRoutes.sessionsPath(), SessionsController::create);
